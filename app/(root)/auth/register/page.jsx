@@ -42,7 +42,7 @@ const Register = () => {
 		},
 	});
 
-	const handleLoginSubmit = async (values) => {
+	const handleRegisterSubmit = async (values) => {
 		console.log(values);
 	};
 	const [isTypePassword, setIsTypePassword] = useState(true);
@@ -54,7 +54,7 @@ const Register = () => {
 				<p className="text-center mt-4">Create an account!</p>
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(handleLoginSubmit)}
+						onSubmit={form.handleSubmit(handleRegisterSubmit)}
 						className="space-y-4"
 					>
 						<FormField
