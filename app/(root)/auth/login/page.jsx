@@ -1,6 +1,7 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
+import { WEBSITE_REGISTER } from "../../../../routes/WebsiteRoute";
 import { useForm } from "react-hook-form";
 import {
 	Form,
@@ -10,12 +11,14 @@ import {
 	FormMessage,
 	FormControl,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { zSchema } from "@/lib/zodSchema";
+import { z } from "zod";
+import ButtonLoading from "@/components/application/ButtonLoading";
 
 const formSchema = zSchema
 	.pick({
@@ -24,6 +27,9 @@ const formSchema = zSchema
 	.extend({ password: z.string().min("3", "Password is required!") });
 
 const Login = () => {
+	const [loading, setLoading] = useState(false);
+	const [isTypePassword, setIsTypePassword] = useState(true);
+
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -32,16 +38,11 @@ const Login = () => {
 		},
 	});
 
-	const onSubmit = (data) => {
-		console.log(data);
-	};
-
-  //submit handler
+	//submit handler
 	const handleLoginSubmit = async (values) => {
-		
+		console.log(values);
 	};
 
-	const [isTypePassword, setIsTypePassword] = useState(true);
 	return (
 		<Card className="w-full max-w-sm m-auto">
 			<CardContent>
@@ -93,12 +94,14 @@ const Login = () => {
 								</FormItem>
 							)}
 						/>
-						<Button
-							type="submit"
-							className="w-full"
-						>
-							Login
-						</Button>
+						<div>
+							<ButtonLoading
+								type="submit"
+								text="Login"
+								loading={loading}
+								className="w-full cursor-pointer"
+							/>
+						</div>
 					</form>
 				</Form>
 				<div className="flex items-center justify-center gap-2">
