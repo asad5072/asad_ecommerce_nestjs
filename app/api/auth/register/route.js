@@ -1,8 +1,11 @@
 import { connectDB } from "@/lib/databaseConnection";
 import { z } from "zod";
 import { zSchema } from "@/lib/zodSchema";
-import { response } from "@/lib/helperFunction";
+import { response, catchError } from "@/lib/helperFunction";
 import UserModel from "@/models/User.model";
+import { sendMail } from "@/lib/sendMail";
+import { emailVerificationLink } from "@/email/emailVerificationLink";
+import { SignJWT } from "jose";
 
 export async function POST(request) {
     try {
@@ -32,10 +35,22 @@ export async function POST(request) {
         password,
       });
       await newRegistration.save();
-      return response(true, 201, "User created successfully", newRegistration);
+      
+
+      //generate token
+      const secret = new TextEncoder().encode(process.env.SECRET_KEY);
+      const token = await new SignJWT()
+        .setPayload({ userId: newRegistration._id })
+        .setIssuedAt()
+        .setExpirationTime("1h")
+        .setProtectedHeader({ alg: "HS256" })
+        .sign(secret);
+
+      await sendMail("Email verification request from Kazi Asad", email, emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/register/verify-email/${token}`));
+
+      return response(true, 200, "User created successfully! Please check your email for verification.");
 
     } catch (error) {
-      console.log(error);
-      return response(false, 500, "Internal server error", error);
+      return catchError(error);
     }
 }
