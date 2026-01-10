@@ -44,7 +44,25 @@ const Register = () => {
 
 	const handleRegisterSubmit = async (values) => {
 		console.log(values);
+    try {
+			setLoading(true);
+			const { data: registerResponse } = await axios.post(
+				"/api/auth/register",
+				values
+			);
+			if (!registerResponse.success) {
+				throw new Error(registerResponse.message);
+			}
+			setLoading(false);
+			form.reset();
+			showToast("success", registerResponse.message);
+		} catch (error) {
+			showToast("error", error?.response?.data?.message || error.message);
+		} finally {
+			setLoading(false);
+		}
 	};
+  const [loading, setLoading] = useState(false);
 	const [isTypePassword, setIsTypePassword] = useState(true);
 	const [isConfirmTypePassword, setIsConfirmTypePassword] = useState(true);
 	return (
